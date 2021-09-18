@@ -28,8 +28,8 @@
                                 <td>{{ user.id }}</td>
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
-                                <td>{{ user.created_at }}</td>
-                                <td><span class="tag tag-success">{{ user.type }}</span></td>
+                                <td>{{ user.type | upText }}</td>
+                                <td>{{ user.created_at | newDate }}</td>
                                 <td>
                                     <a href="#">
                                         <i class="fas fa-edit blue"></i>
@@ -132,21 +132,37 @@
         },
         methods: {
             loadUsers() {
+                this.$Progress.start()
                 axios.get("/api/users")
                 .then( resp => {
-                    console.log(resp.data.users.data)
-                    this.users = resp.data.users.data
+                    // console.log(resp.data.users.data)
+                    this.users = resp.data.users.data;
+                    this.$Progress.finish();
                 })
             },
             createUser() {
+                this.$Progress.start();
+
                 this.form.post('/api/users')
                 .then( resp => {
-                    console.log(resp);
+
+                    Fire.$emit('afterCreated'); // send custom event, component communication
+
+                    $('#addUser').modal('hide');
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'User created successfully'
+                    });
+                    this.$Progress.finish();
                 });
             }
         },
         created() {
             this.loadUsers();
+            Fire.$on('afterCreated', () => this.loadUsers()); // catch custom event, component communication
+            // is not good for performance reason only for test use
+            // setInterval(() => this.loadUsers() , 3000);
         }
     }
 </script>
