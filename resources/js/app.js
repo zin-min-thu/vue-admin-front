@@ -51,11 +51,13 @@ Vue.component(AlertSuccess.name, AlertSuccess);
 // const Profile = { template: '<div>Profile</div>' }
 
 import Dashboard from './components/Dashboard.vue';
+import Developer from './components/Developer.vue';
 import Profile from './components/Profile.vue';
 import Users from './components/Users.vue';
 
 const routes = [
     { path: '/dashboard', component: Dashboard },
+    { path: '/developer', component: Developer },
     { path: '/users', component: Users },
     { path: '/profile', component: Profile }
 ];
@@ -81,6 +83,21 @@ window.Fire = new Vue();
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
+// passport
+Vue.component(
+    'passport-clients',
+    require('./components/passport/Clients.vue').default
+);
+
+Vue.component(
+    'passport-authorized-clients',
+    require('./components/passport/AuthorizedClients.vue').default
+);
+
+Vue.component(
+    'passport-personal-access-tokens',
+    require('./components/passport/PersonalAccessTokens.vue').default
+);
 
 const app = new Vue({
     el: '#app',
