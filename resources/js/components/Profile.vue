@@ -14,8 +14,8 @@
         <div class="widget-user-image">
           <img
             class="img-circle"
-            src="/img/user3-128x128.jpg"
-            alt="User Avatar"
+            :src="getProfilePhoto()"
+            alt="User Profile"
           />
         </div>
         <div class="card-footer">
@@ -75,6 +75,7 @@
             </div>
 
             <div class="tab-pane" id="settings">
+              <AlertError :form="form" />
               <form class="form-horizontal">
                 <div class="form-group row">
                   <label for="inputName"  class="col-sm-2 col-form-label"
@@ -88,7 +89,9 @@
                       id="name"
                       name="name"
                       placeholder="Name"
+                      :class="{ 'is-invalid': form.errors.has('name') }"
                     />
+                    <has-error :form="form" field="name"></has-error>
                   </div>
                 </div>
                 <div class="form-group row">
@@ -112,6 +115,8 @@
                   >
                   <div class="col-sm-10">
                     <textarea
+                      v-model="form.bio"
+                      name="bio"
                       class="form-control"
                       id="inputExperience"
                       placeholder="Experience"
@@ -127,6 +132,7 @@
                       type="file"
                       class="form-control"
                       id="photo"
+                      @change="uploadImage"
                     />
                   </div>
                 </div>
@@ -135,12 +141,12 @@
                     >Password (leave empty if not changing)</label
                   >
                   <div class="col-sm-10">
-                    <input type="password" name="password" id="password" class="form-control">
+                    <input v-model="form.password" type="password" name="password" id="password" class="form-control">
                   </div>
                 </div>
                 <div class="form-group row">
                   <div class="offset-sm-2 col-sm-10">
-                    <button type="submit" class="btn btn-success">Update</button>
+                    <button @click.prevent="updateProfile" type="submit" class="btn btn-success">Update</button>
                   </div>
                 </div>
               </form>
@@ -158,17 +164,6 @@
 
 <script>
 export default {
-    created() {
-        this.form.clear();
-
-        axios.get('/api/profile')
-        .then( resp => {
-            this.form.fill(resp.data.user);
-        })
-        .catch( e => {
-            console.log(e)
-        })
-    },
     data() {
         return {
             form: new Form({
@@ -182,7 +177,69 @@ export default {
             })
         }
     },
+    methods: {
+      loadProfile() {
+        axios.get('/api/profile')
+        .then( resp => {
+            this.form.fill(resp.data.user);
+        })
+        .catch( e => {
+            console.log(e)
+        })
+      },
+      getProfilePhoto() {
+        let photo = ( this.form.photo.length > 200) ? this.form.photo : "img/profile/"+this.form.photo;
+        return photo;
+      },
+      updateProfile() {
+        this.$Progress.start();
 
+        if(this.form.password == '') {
+          this.form.password = undefined;
+        }
+
+        this.form.put('/api/profile')
+          .then( resp => {
+            Fire.$emit('afterAction');
+            
+            Toast.fire({
+              icon: 'success',
+              tilte: resp.data.messsage
+            });
+
+            this.$Progress.finish();
+          })
+          .catch( e => {
+            this.$Progress.fail();
+          })
+      },
+      uploadImage( e ) {
+        let file = e.target.files[0];
+        console.log(file);
+
+        let reader = new FileReader();
+
+        if( file['size'] < 2111775) {
+          reader.onloadend = ( file ) =>  {
+            this.form.photo = reader.result;
+            // console.log('Result', reader.result)
+          }
+
+          // console.log("Uploading profile")
+          reader.readAsDataURL(file)
+        } else {
+
+        }
+        
+      }
+    },
+    created() {
+        this.form.clear();
+
+        this.loadProfile();
+
+        Fire.$on('afterAction', () => this.loadProfile());
+    },
     mounted() {
         console.log("Component mounted.");
     },

@@ -9,7 +9,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 class AuthServiceProvider extends ServiceProvider
 {
     /**
-     * The policy mappings for the application.
+     * The policy mappings for the application. 
      *
      * @var array
      */
@@ -25,6 +25,18 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+
+        Gate::define('isAdmin', function($user) {
+            return $user->type === 'admin';
+        });
+
+        Gate::define('isAuthor', function($user) {
+            return $user->type === 'author';
+        });
+
+        Gate::define('isUser', function($user) {
+            return $user->type === 'user';
+        });
 
         Passport::routes();
         //

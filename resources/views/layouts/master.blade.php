@@ -71,6 +71,7 @@
                                 </p>
                             </router-link>
                         </li>
+                        @can('isAdmin')
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-cog green"></i>
@@ -96,6 +97,7 @@
                                 </p>
                             </router-link>
                         </li>
+                        @endcan
                         <li class="nav-item">
                             <router-link to="/profile" class="nav-link">
                                 <i class="nav-icon fas fa-user"></i>
@@ -153,6 +155,11 @@
         <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
+    @auth
+        <script>
+            window.user = @json(auth()->user());
+        </script>
+    @endauth
     <script src="/js/app.js"></script>
 </body>
 

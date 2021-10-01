@@ -4,6 +4,11 @@ window.Vue = require('vue');
 
 import VueRouter from 'vue-router';
 import moment from 'moment';
+import {routes} from './router';
+
+// Gate permission
+import Gate from './Gate';
+Vue.prototype.$gate = new Gate(window.user); // Prototype format can access anywhere from vue js
 
 import Swal from 'sweetalert2';
 window.Swal = Swal;
@@ -50,21 +55,21 @@ Vue.component(AlertSuccess.name, AlertSuccess);
 // const Dashboard = { template: '<div>Dashboard</div>' }
 // const Profile = { template: '<div>Profile</div>' }
 
-import Dashboard from './components/Dashboard.vue';
-import Developer from './components/Developer.vue';
-import Profile from './components/Profile.vue';
-import Users from './components/Users.vue';
+// import Dashboard from './components/Dashboard.vue';
+// import Developer from './components/Developer.vue';
+// import Profile from './components/Profile.vue';
+// import Users from './components/Users.vue';
 
-const routes = [
-    { path: '/dashboard', component: Dashboard },
-    { path: '/developer', component: Developer },
-    { path: '/users', component: Users },
-    { path: '/profile', component: Profile }
-];
+// const routes = [
+//     { path: '/dashboard', component: Dashboard },
+//     { path: '/developer', component: Developer },
+//     { path: '/users', component: Users },
+//     { path: '/profile', component: Profile }
+// ];
 
 const router = new VueRouter({
     mode: 'history',
-    routes // short for `routes: routes`
+    routes : routes
 })
 
 // Global filter function

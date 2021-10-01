@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row mt-5">  
+        <div class="row mt-5" v-if="$gate.isAdmin()">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
@@ -146,16 +146,18 @@
             },
             loadUsers() {
                 this.$Progress.start()
-                axios.get("/api/users")
-                .then( resp => {
-                    // console.log(resp.data.users.data)
-                    this.users = resp.data.users.data;
-                    this.$Progress.finish();
-                })
-                .catch( e => {
-                    console.log(e);
-                    this.$Progress.fail();
-                });
+                if(this.$gate.isAdmin) {
+                    axios.get("/api/users")
+                    .then( resp => {
+                        // console.log(resp.data.users.data)
+                        this.users = resp.data.users.data;
+                        this.$Progress.finish();
+                    })
+                    .catch( e => {
+                        console.log(e);
+                        this.$Progress.fail();
+                    });
+                }
             },
             createUser() {
                 this.$Progress.start();
