@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row mt-5" v-if="$gate.isAdmin()">
+        <div class="row mt-5" v-if="$gate.isAdminOrAuthor()">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
@@ -24,7 +24,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="user in users" :key="user.id">
+                            <tr v-for="user in users.data" :key="user.id">
                                 <td>{{ user.id }}</td>
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
@@ -44,11 +44,22 @@
                         </table>
                     </div>
                     <!-- /.card-body -->
+                    <div class="card-footer">
+                        <!-- <pagination :data="users" @pagination-change-page="getResults"></pagination> -->
+                        <pagination :data="users" @pagination-change-page="loadUsers">
+                            <span slot="prev-nav">&lt; Previous</span>
+                            <span slot="next-nav">Next &gt;</span>
+                        </pagination>
+
+                    </div>
                 </div>
             <!-- /.card -->
             </div>
         </div>
 
+        <div v-if="!$gate.isAdminOrAuthor()">
+            <admin-notfound></admin-notfound>
+        </div>
         <!-- Modal -->
         <div class="modal fade" id="addUser" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="userAddLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -144,13 +155,20 @@
                 $('#addUser').modal('show');
                 this.form.fill(user);
             },
-            loadUsers() {
+        // Pagination with new function
+        //    getResults(page = 1) {
+        //         axios.get('/api/users?page=' + page)
+        //             .then(response => {
+        //                 this.users = response.data.users;
+        //             });
+        //     },
+            loadUsers( page = 1 ) {
                 this.$Progress.start()
-                if(this.$gate.isAdmin) {
-                    axios.get("/api/users")
+                if(this.$gate.isAdminOrAuthor) {
+                    axios.get("/api/users?page=" + page)
                     .then( resp => {
                         // console.log(resp.data.users.data)
-                        this.users = resp.data.users.data;
+                        this.users = resp.data.users;
                         this.$Progress.finish();
                     })
                     .catch( e => {

@@ -1,21 +1,14 @@
 <template>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">Dashboard Component</div>
-
-                    <div class="card-body">
-                        I'm an dashboard component.
-                    </div>
-                </div>
-            </div>
+            <admin-notfound></admin-notfound>
         </div>
     </div>
 </template>
 
 <script>
     export default {
+        name: 'AdminDashboard',
         mounted() {
             console.log('Component mounted.')
         }

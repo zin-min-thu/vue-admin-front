@@ -26,6 +26,9 @@ const Toast = Swal.mixin({
 })
 window.Toast = Toast;
 
+// Pagination
+Vue.component('pagination', require('laravel-vue-pagination'));
+
 import VueProgressBar from 'vue-progressbar';
 
 Vue.use(VueProgressBar, {
@@ -103,6 +106,9 @@ Vue.component(
     'passport-personal-access-tokens',
     require('./components/passport/PersonalAccessTokens.vue').default
 );
+
+// Admin not foud component
+Vue.component('admin-notfound', require('./components/AdminNotFound.vue').default);
 
 const app = new Vue({
     el: '#app',

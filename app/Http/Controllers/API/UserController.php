@@ -22,9 +22,12 @@ class UserController extends Controller
     }
     public function index()
     {
-        $this->authorize('isAdmin');
+        // $this->authorize('isAdmin');
+        if(Gate::none(['isAdmin', 'isAuthor'])) {
+            return response()->json(['message' => 'You have no permission for next page.']);
+        }
 
-        $users = User::latest()->paginate(10);
+        $users = User::latest()->paginate(5);
 
         return response()->json(['users'=>$users]);
         // return $users;
